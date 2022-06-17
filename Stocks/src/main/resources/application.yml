@@ -1,0 +1,43 @@
+spring:
+   mvc:
+      pathmatch:
+            matching-strategy: ANT_PATH_MATCHER
+   datasource:
+      url: jdbc:mysql://localhost:3306/stockdb
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root
+   jpa:
+      hibernate.ddl-auto: update
+      properties:
+         hibernate:
+            dialect: org.hibernate.dialect.MySQL8Dialect
+   application:
+    name: stocks
+   zipkin:
+    base-url: http://localhost:9411/
+    
+management:
+  endpoints:    web:      exposure:        include: "*"  health:    circuitbreakers:      enabled: true
+  endpoint:    health:      show-details: always
+      
+resilience4j:
+  circuitbreaker:
+    instances:
+      SECTOR-CIRCUIT-BREAKER:
+        registerHealthIndicator: true
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+      AUTH-TOKEN-VALIDATION:
+        registerHealthIndicator: true
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+
+server:
+  port: 8003
